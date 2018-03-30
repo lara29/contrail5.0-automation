@@ -1,0 +1,79 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# command example: ansible-playbook -i all.inv 02-deploy-networks.yml
+---
+- name: DEPLOY NETWORKS
+  hosts: contrail-ubuntu-vm
+  gather_facts: false
+  tasks:
+
+    - name: Import variables from the file /vars/contrail.info into 'info' variable
+      include_vars:
+        file: contrail.info
+        name: info
+
+    - name: Set necessary variables
+      set_fact:
+        os_auth:
+          auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+          username: admin
+          password: contrail123
+          project_name: admin
+          project_domain_name: default
+          user_domain_name: default
+
+    - name: install shade
+      pip:
+        name: shade
+
+    - name: create scripts directory
+      file: state=directory path=~/scripts
+
+    - name: copy the scripts required
+      copy:
+        src: /root/Contrail_Automation/Contrail-Install/deploy-networks.yml
+        dest: /root/scripts/
+
+    - name: Add heat_stack_owner role
+      os_user_role:
+        auth: "{{ os_auth }}"
+        user: admin
+        role: heat_stack_owner
+        project: admin
+      environment:
+        OS_IDENTITY_API_VERSION: 3
+
+    - name: Install networks, subnet, and policy
+      os_stack:
+        auth: "{{ os_auth }}"
+        name: deploy-networks
+        state: present
+        template: "/root/scripts/deploy-networks.yml"
+
+    - name: sleep for 5 seconds and continue with play
+      wait_for: timeout=5
+
+    - name: Gather facts about previously created networks
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default network list -f json
+      register: network_list
+    - name: Display Networks
+      set_fact:
+        networks: "{{ network_list.stdout | from_json | json_query(jq)}}"
+      vars:
+        jq: "[?contains(Name,'_network')].{Name:Name,ID:ID,Subnets:Subnets}"
+    - debug:
+        msg:
+          - "{{networks}}"
+
+    - name: Gather facts about previously created subnets
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default subnet list -f json
+      register: network_list
+    - name: Display Subnets
+      set_fact:
+        subnets: "{{ network_list.stdout | from_json | json_query(jq)}}"
+      vars:
+        jq: "[?contains(Name,'')].{ID:ID,Network:Network,Subnet:Subnet}"
+    - debug:
+        msg:
+          - "{{subnets}}"
+

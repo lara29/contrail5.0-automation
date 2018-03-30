@@ -1,0 +1,81 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# command example: ansible-playbook -i all.inv 01-contrail-server-manager.yml
+---
+- name: DEPLOY CONTRAIL
+  hosts: contrail-ubuntu-vm
+  gather_facts: false
+
+  tasks:
+
+    - name: Import variables from the file /vars/contrail.info into 'info' variable
+      include_vars:
+        file: contrail.info
+        name: info
+
+    - name: create packages directory
+      file: state=directory path=~/packages
+
+    - name: create json directory
+      file: state=directory path=~/json
+
+    - name: download contrail-server-manager
+      get_url:
+        url: http://{{ info.contrail_package[0].file_server }}/contrail-server-manager-installer_{{ info.contrail_package[0].contrail_version }}_{{ info.host_vm[0].ubuntu_version }}.deb
+        dest: ~/packages/contrail-server-manager-installer_{{ info.contrail_package[0].contrail_version }}_{{ info.host_vm[0].ubuntu_version }}.deb
+
+    - name: download contrail-cloud-docker
+      get_url:
+        url: http://{{ info.contrail_package[0].file_server }}/contrail-cloud-docker_{{ info.contrail_package[0].contrail_version }}-{{ info.contrail_package[0].package_sku}}_{{ info.host_vm[0].ubuntu_version }}.tgz
+        dest: ~/packages/contrail-cloud-docker_{{ info.contrail_package[0].contrail_version }}-{{ info.contrail_package[0].package_sku}}_{{ info.host_vm[0].ubuntu_version }}.tgz
+
+    - name: parametrized template - a
+      template:
+        src: ~/Contrail_Automation/templates/contrail-install.j2
+        dest: ~/json/contrail-install.json
+
+    - name: Install a server manager deb package
+      apt:
+        deb: ~/packages/contrail-server-manager-installer_{{ info.contrail_package[0].contrail_version }}_{{ info.host_vm[0].ubuntu_version }}.deb
+
+    - stat: path=/var/log/contrail-server-manager/debug.log
+      register: debug_file
+
+    - name: Empty Debug file
+      copy:
+        content: ""
+        dest: /var/log/contrail-server-manager/debug.log
+      when: debug_file.stat.exists
+
+    - name: Install contrail
+      shell: /opt/contrail/contrail_server_manager/provision_containers.sh -j /root/json/contrail-install.json -ip "{{ info.host_vm[0].ip_address.split('/')[0] }}" -sku "{{ info.contrail_package[0].package_sku}}"
+      register: installation_result
+      args:
+        executable: /bin/bash
+    - debug:
+        var: installation_result.stdout_lines
+
+    - name: Wait for the Bare Metal Agent to complete
+      shell: cat /var/log/contrail-server-manager/debug.log
+      register: results
+      args:
+        executable: /bin/bash
+      until: results.stdout.find("bare_metal_agent_completed") != -1
+      retries: 120
+      delay: 20
+
+    - name: The VM Restarts. Please wait for it to come back... 
+      wait_for_connection:
+        delay: 300
+        sleep: 20
+        timeout: 900
+
+    - name: Wait for the Provisioning Process to complete
+      shell: cat /var/log/contrail-server-manager/debug.log
+      register: results
+      args:
+        executable: /bin/bash
+      until: results.stdout.find("Process Done") != -1
+      retries: 120
+      delay: 20
+

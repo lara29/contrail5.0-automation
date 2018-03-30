@@ -1,0 +1,77 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# command example: ansible-playbook -i all.inv 04-image-upload.yml
+---
+- name: IMAGE UPLOAD
+  hosts: contrail-ubuntu-vm
+  gather_facts: false
+  tasks:
+
+    - name: Import variables from the file /vars/contrail.info into 'info' variable
+      include_vars:
+        file: contrail.info
+        name: info
+
+    - name: Set necessary variables
+      set_fact:
+        os_auth:
+          auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+          username: admin
+          password: contrail123
+          project_name: admin
+          os_tenant_name: admin
+          project_domain_name: default
+          user_domain_name: default
+
+    - name: download ubuntu gui image
+      get_url:
+        url: http://{{ info.contrail_package[0].file_server }}/gui-img-flat.vmdk
+        dest: /root/images/gui-img-flat.vmdk
+
+    - name: Upload GUI Image
+      os_image:
+        auth: "{{ os_auth }}"
+        name: gui_image
+        container_format: bare
+        disk_format: vmdk
+        filename: /root/images/gui-img-flat.vmdk
+        is_public: yes
+
+    - name: Upload Primary Image 
+      os_image:
+        auth: "{{ os_auth }}"
+        name: webserver-primary_image
+        container_format: bare
+        disk_format: qcow2
+        filename: /root/images/ubuntu-webserver-primary.img
+        is_public: yes
+
+    - name: Upload Secondary Image         
+      os_image:
+        auth: "{{ os_auth }}"
+        name: webserver-secondary_image
+        container_format: bare
+        disk_format: qcow2
+        filename: /root/images/ubuntu-webserver-secondary.img
+        is_public: yes
+
+    - name: Upload DB Image         
+      os_image:
+        auth: "{{ os_auth }}"
+        name: db_image
+        container_format: bare
+        disk_format: qcow2
+        filename: /root/images/ubuntu-db.img
+        is_public: yes
+
+    - name: Gather facts about previously created images
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default image list -f json
+      register: image_list
+
+    - name: Display Images
+      set_fact:
+        images: "{{ image_list.stdout | from_json }}"
+    - debug:
+        msg:
+          - "{{images}}"
+

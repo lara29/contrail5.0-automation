@@ -1,0 +1,17 @@
+contrail_package:
+  -
+    id: 'dc135'
+    contrail_version: '4.1.0.0-8'
+    package_sku: 'ocata'
+    openstack_release: '4.0.0'
+    file_server: '10.10.7.202'
+host_vm:
+  -
+    hostname: 'ubuntu'
+    ubuntu_version: 'xenial'
+    password: 'c0ntrail123'
+    management_interface: 'eno3'
+    mac_address: '14:18:77:46:05:67'
+    ip_address: '10.10.7.205/20'
+    default_gateway: '10.10.10.1'
+

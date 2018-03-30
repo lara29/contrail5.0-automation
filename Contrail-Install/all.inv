@@ -1,0 +1,9 @@
+[local]
+localhost ansible_connection=local
+
+[contrail-ubuntu-vm]
+10.10.7.205
+
+[contrail-file-server]
+10.10.7.202
+

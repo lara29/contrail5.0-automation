@@ -1,0 +1,148 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# command example: ansible-playbook -i all.inv image-prep.yml
+---
+- name: PREPARE IMAGES
+  hosts: contrail-ubuntu-vm
+  gather_facts: false
+  environment:
+    LIBGUESTFS_BACKEND: direct
+  
+  tasks:
+
+  - name: create images directory
+    file: state=directory path=~/images
+
+  - name: copy the firstboot shell scripts required
+    copy:
+      src: /root/Contrail_Automation/Contrail-Install/03-image-prep/firstboots
+      dest: /root/
+      
+  - name: copy the config shell scripts required
+    copy:
+      src: /root/Contrail_Automation/Contrail-Install/03-image-prep/configs
+      dest: /root/
+
+  - name: Install libguestfs tools
+    apt:
+      name: libguestfs-tools
+      state: present
+
+  - name: Install simplestreams
+    apt:
+      name: simplestreams
+      state: present
+
+  - name: Install jq
+    apt:
+      name: jq
+      state: present
+      
+  - name: Check if file guestfs_patched exists
+    stat:
+      path: /root/guestfs_patched
+    register: patch_result
+
+  - name: Workaround for Ubuntu Xenial (https://bugs.launchpad.net/ubuntu/+source/isc-dhcp/+bug/1650740)
+    shell: |
+      tar -xzf init.tar.gz
+      sed -i '/if test "$guestfs_network" = 1; then/a\ \ \ \ touch /etc/fstab' init
+      tar -czvf init.tar.gz init
+      rm init
+      touch /root/guestfs_patched
+    args:
+      executable: /bin/bash
+      chdir: /usr/lib/x86_64-linux-gnu/guestfs/supermin.d
+    when: patch_result.stat.exists == False
+
+  - name: Get the latest ubuntu xenial cloud image url
+    shell: |
+      sstream-query --json --max=1 --keyring=/usr/share/keyrings/ubuntu-cloudimage-keyring.gpg http://cloud-images.ubuntu.com/releases/streams/v1/com.ubuntu.cloud:released:download.sjson arch=amd64 release_codename='Xenial Xerus' ftype='disk1.img' | jq -r '.[].item_url'
+    register: result
+    args:
+      executable: /bin/bash
+
+  - set_fact:
+     url_path: "{{ result.stdout }}"
+
+  - debug:
+      var: url_path
+      verbosity: 2
+
+  - name: Fetch the Ubuntu xenial cloud image
+    get_url:
+      url: "{{ url_path }}"
+      dest: /root/images/ubuntu-image.img
+
+  - name: Check if ubuntu image exists
+    stat:
+      path: /root/images/ubuntu-image.img
+    register: sym
+
+  - debug:
+      msg: "Ubuntu cloud image not present"
+    when: sym.stat.exists == False
+  
+  - name: Check if secondary webserver first-boot file is present
+    stat:
+      path: /root/firstboots/secfb
+    register: ws_sec_sym
+      
+  - debug:
+      msg: "Firstboot file for secondary web server is not present"
+    when: ws_sec_sym.stat.exists == "False"
+
+  - name: Check if secondary webserver image prep script is present
+    stat:
+      path: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-sec-image.sh
+    register: ws_sec_sym_prep
+
+  - debug:
+      msg: "Firstboot file for secondary web server is not present"
+    when: ws_sec_sym_prep.stat.exists == "False"
+
+  - name: Prepare Secondary Webserver image
+    script: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-sec-image.sh
+
+  - name: Check if primary webserver first-boot file is present
+    stat:
+      path: /root/firstboots/primaryfb
+    register: ws_pri_sym
+
+  - debug:
+      msg: "Firstboot file for Primary web server is not present"
+    when: ws_pri_sym.stat.exists == "False"
+
+  - name: Check if Primary webserver image prep script is present
+    stat:
+      path: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-primary-image.sh
+    register: ws_pri_sym_prep
+
+  - debug:
+      msg: "Firstboot file for primary web server is not present"
+    when: ws_pri_sym_prep.stat.exists == "False"
+
+  - name: Prepare Primary Webserver image
+    script: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-primary-image.sh
+
+  - name: Check if DB Server first-boot file is present
+    stat:
+      path: /root/firstboots/dbfb
+    register: db_sym
+
+  - debug:
+      msg: "Firstboot file for DB server is not present"
+    when: db_sym.stat.exists == "False"
+
+  - name: Check if DB server image prep script is present
+    stat:
+      path: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-db-image.sh
+    register: db_sym_prep
+
+  - debug:
+      msg: "Firstboot file for Db server is not present"
+    when: db_sym_prep.stat.exists == "False"
+
+  - name: Prepare DB Webserver image
+    script: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-db-image.sh
+

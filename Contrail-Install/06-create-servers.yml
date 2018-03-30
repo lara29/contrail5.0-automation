@@ -1,0 +1,142 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# command example: ansible-playbook -i all.inv 06-create-servers.yml
+---
+- name: CREATE SERVERS
+  hosts: contrail-ubuntu-vm
+  gather_facts: false
+  tasks:
+
+    - name: Import variables from the file /vars/contrail.info into 'info' variable
+      include_vars:
+        file: contrail.info
+        name: info
+
+    - name: Set necessary variables
+      set_fact:
+        os_auth:
+          auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+          username: admin
+          password: contrail123
+          project_name: admin
+          os_tenant_name: admin
+          project_domain_name: default
+          user_domain_name: default
+
+    - name: Gather facts about previously created networks
+      os_networks_facts:
+        auth: "{{ os_auth }}"
+
+    - name: Fetch Network ID
+      set_fact:
+        webserver_network_id: "{{ openstack_networks | json_query(jq_webserver) }}"
+        gui_network_id: "{{ openstack_networks | json_query(jq_gui) }}"
+        db_network_id: "{{ openstack_networks | json_query(jq_db) }}"
+      vars:
+        jq_webserver: "[?name=='webserver_network'].id"
+        jq_gui: "[?name=='gui_network'].id"
+        jq_db: "[?name=='db_network'].id"
+    - debug:
+        msg:
+          - "{{db_network_id}}"
+          - "{{gui_network_id}}"
+          - "{{webserver_network_id}}"
+
+    - name: Create DB SERVER
+      os_server:
+        auth: "{{ os_auth }}"
+        name: db
+        image: db_image
+        flavor: m1.tiny
+        nics:
+          - net-id: "{{ db_network_id[0] }}"
+        security_groups: default
+        timeout: 3600
+        userdata: |
+          #!/bin/bash
+          sh /root/dbfb.sh
+        
+    - name: Gather server facts from the DB Server
+      os_server_facts:
+        auth: "{{ os_auth }}"
+        server: db
+        
+    - name: Get the IP address of DB server
+      set_fact:
+        db_server_ip: "{{ openstack_servers | json_query(jq_dbip) }}"
+      vars:
+        jq_dbip: "[?name=='db'].private_v4"
+    - debug:
+        msg:
+          - "{{ db_server_ip }}"
+
+    - name: Create WEBSERVER SECONDARY
+      os_server:
+        auth: "{{ os_auth }}"
+        name: webserver_secondary
+        image: webserver-secondary_image
+        flavor: m1.tiny
+        nics:
+          - net-id: "{{ webserver_network_id[0] }}"
+        security_groups: default
+        timeout: 3600
+        userdata: |
+          #!/bin/bash
+          sh /root/secfb.sh
+
+    - name: Gather server facts from the secondary webserver
+      os_server_facts:
+        auth: "{{ os_auth }}"
+        server: webserver_secondary
+        
+    - name: Get the IP address of secondary web server
+      set_fact:
+        ws_sec_server_ip: "{{ openstack_servers | json_query(jq_sec_ip) }}"
+      vars:
+        jq_sec_ip: "[?name=='webserver_secondary'].private_v4"
+    - debug:
+        msg:
+          - "{{ ws_sec_server_ip }}"
+          
+    - name: Create WEBSERVER PRIMARY
+      os_server:
+        auth: "{{ os_auth }}"
+        name: webserver_primary
+        image: webserver-primary_image
+        flavor: m1.tiny
+        nics:
+          - net-id: "{{ webserver_network_id[0] }}"
+        security_groups: default
+        timeout: 3600
+        userdata: |
+          #!/bin/bash
+          touch /root/ips
+          echo "{{ db_ip }}" >> /root/ips
+          echo "{{ ws_ip }}" >> /root/ips
+          sh /root/primaryfb.sh
+      vars:
+        db_ip: "{{ db_server_ip[0] }}"
+        ws_ip: "{{ ws_sec_server_ip[0] }}"
+
+    - name: Create GUI SERVER
+      os_server:
+        auth: "{{ os_auth }}"
+        name: gui
+        image: gui_image
+        flavor: m1.small
+        nics:
+          - net-id: "{{ gui_network_id[0] }}"
+        security_groups: default
+        timeout: 3600
+
+    - name: Gather facts about the created servers
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default server list -f json
+      register: server_list
+
+    - name: Display Servers
+      set_fact:
+        servers: "{{ server_list.stdout | from_json }}"
+    - debug:
+        msg:
+          - "{{servers}}"
+

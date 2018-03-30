@@ -1,0 +1,75 @@
+{
+"cluster" : [
+    {
+        "id": "{{ info.contrail_package[0].id }}",
+        "parameters" : {
+            "provision": {
+                "contrail_{{ info.contrail_package[0].contrail_version.split('.')[0] }}": {
+                        "enable_lbaas": true,
+                        "kernel_upgrade": false
+                                 },
+                "openstack":{
+                    "openstack_manage_amqp": true,
+                    "keystone": {
+                           "admin_password": "contrail123"
+                    }
+                },
+                "kolla_globals": {
+                    "horizon_port": 8898,
+                    "enable_haproxy": "no",
+                    "kolla_base_distro": "ubuntu",
+                    "openstack_release": "{{ info.contrail_package[0].openstack_release }}",
+                    "network_interface": "{{ info.host_vm[0].management_interface }}"
+                }
+            }
+        }
+    }
+],
+"server": [
+    {
+        "cluster_id": "{{ info.contrail_package[0].id }}",
+        "domain": "juniper.net",
+        "id": "{{ info.host_vm[0].hostname }}",
+        "parameters" : {
+            "partition": "/dev/vda"
+        },
+        "network" : {
+            "interfaces": [
+                {
+                    "name": "{{ info.host_vm[0].management_interface }}",
+                    "dhcp": false,
+                    "mac_address": "{{ info.host_vm[0].mac_address }}",
+                    "ip_address": "{{ info.host_vm[0].ip_address }}",
+                    "default_gateway": "{{ info.host_vm[0].default_gateway }}"
+                }
+            ],
+            "management_interface": "{{ info.host_vm[0].management_interface }}",
+            "provisioning": "kickstart"
+        },
+        "password": "{{ info.host_vm[0].password }}",
+        "roles": [
+                 "contrail-controller",
+                 "contrail-analytics",
+                 "contrail-analyticsdb",
+                 "openstack",
+                 "contrail-compute" ]
+    }
+],
+"image": [
+    {
+        "category": "package",
+        "id": "contrail_{{ info.contrail_package[0].contrail_version.split('.')[0] }}_{{ info.contrail_package[0].contrail_version.split('.')[1] }}",
+        "path": "/root/packages/contrail-cloud-docker_{{ info.contrail_package[0].contrail_version }}-{{ info.contrail_package[0].package_sku}}_xenial.tgz",
+        "type": "contrail-ubuntu-package",
+        "version": "{{ info.contrail_package[0].contrail_version }}",
+        "parameters" : {
+                "provision": {
+                    "contrail": {
+                        "contrail_version": "{{ info.contrail_package[0].contrail_version }}",
+                        "package_sku": "{{ info.contrail_package[0].package_sku}}"
+                    }
+                }
+            }
+    }
+]
+}
