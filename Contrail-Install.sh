@@ -123,7 +123,7 @@ IFS='/' read -r -a file_ip <<< "$file_server"
 echo "[local]
 localhost ansible_connection=local
 
-[contrail-ubuntu-vm]
+[contrail-ubuntu-host]
 ${vm_ip[0]}
 
 [contrail-file-server]
@@ -156,7 +156,7 @@ echo "                      Contrail Deploy"
 echo "##############################################################"
 echo ""
 echo ""
-ansible-playbook -i Contrail-Install/all.inv Contrail-Install/01-contrail-server-manager.yml
+ansible-playbook -i Contrail-Install/all.inv Contrail-Install/01-contrail-50-deploy.yml
 echo "################# Contrail Deploy - Complete #################"
 sleep 5
 
