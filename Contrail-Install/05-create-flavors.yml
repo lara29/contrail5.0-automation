@@ -3,7 +3,7 @@
 # command example: ansible-playbook -i all.inv 05-create-flavors.yml
 ---
 - name: CREATE FLAVORS
-  hosts: contrail-ubuntu-vm
+  hosts: contrail-ubuntu-host
   gather_facts: false
   vars:
     openstackrc:
