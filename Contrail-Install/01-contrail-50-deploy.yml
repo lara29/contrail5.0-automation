@@ -54,7 +54,6 @@
       
     - shell: |
         kubectl get pods --all-namespaces|tee kube_status.txt
-      
       args:
         executable: /bin/bash
       register: pod_status
