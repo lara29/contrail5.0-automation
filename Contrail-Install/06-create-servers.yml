@@ -3,8 +3,19 @@
 # command example: ansible-playbook -i all.inv 06-create-servers.yml
 ---
 - name: CREATE SERVERS
-  hosts: contrail-ubuntu-vm
+  hosts: contrail-ubuntu-host
   gather_facts: false
+  vars:
+    openstackrc:
+      OS_AUTH_URL: http://keystone-api.openstack:35357/v3
+      OS_USERNAME: admin
+      OS_PASSWORD: password
+      OS_TENANT_NAME: admin
+      OS_IDENTITY_API_VERSION: 3
+      OS_USER_DOMAIN_NAME: Default
+      OS_PROJECT_DOMAIN_NAME: Default
+  
+  environment: "{{ openstackrc }}"
   tasks:
 
     - name: Import variables from the file /vars/contrail.info into 'info' variable
@@ -15,9 +26,9 @@
     - name: Set necessary variables
       set_fact:
         os_auth:
-          auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+          auth_url: http://keystone-api.openstack:35357/v3
           username: admin
-          password: contrail123
+          password: password
           project_name: admin
           os_tenant_name: admin
           project_domain_name: default
@@ -130,7 +141,7 @@
         timeout: 3600
 
     - name: Gather facts about the created servers
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default server list -f json
+      shell: openstack server list -f json
       register: server_list
 
     - name: Display Servers
