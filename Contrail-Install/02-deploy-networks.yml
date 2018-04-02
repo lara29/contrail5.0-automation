@@ -47,12 +47,9 @@
 
     - name: Add heat_stack_owner role
       os_user_role:
-        auth: "{{ os_auth }}"
         user: admin
         role: heat_stack_owner
         project: admin
-      environment:
-        OS_IDENTITY_API_VERSION: 3
 
     - name: Install networks, subnet, and policy
       os_stack:
