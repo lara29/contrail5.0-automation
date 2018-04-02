@@ -64,11 +64,13 @@
     - debug:
         var: pod_result.stdout_lines
         verbosity: 5
+        
+    - set_fact: pods_not_running="{{ lookup('env','NOT_RUNNING') }}"
 
     - name: Throw error and stop execution if any of the pods not in running status
       fail:
          msg: All the pods need to be in running state
-      when: pod_result
+      when: 
           
     - name: Wait for the Provisioning Process to complete
       shell: cat /var/log/contrail-server-manager/debug.log
