@@ -5,6 +5,17 @@
 - name: CREATE FLAVORS
   hosts: contrail-ubuntu-vm
   gather_facts: false
+  vars:
+    openstackrc:
+      OS_AUTH_URL: http://keystone-api.openstack:35357/v3
+      OS_USERNAME: admin
+      OS_PASSWORD: password
+      OS_TENANT_NAME: admin
+      OS_IDENTITY_API_VERSION: 3
+      OS_USER_DOMAIN_NAME: Default
+      OS_PROJECT_DOMAIN_NAME: Default
+  
+  environment: "{{ openstackrc }}"
   tasks:
 
     - name: Import variables from the file /vars/contrail.info into 'info' variable
@@ -15,7 +26,7 @@
     - name: Set necessary variables
       set_fact:
         os_auth:
-          auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+          auth_url: http://keystone-api.openstack:35357/v3
           username: admin
           password: contrail123
           project_name: admin
@@ -25,7 +36,6 @@
 
     - name: Create 'm1.tiny' flavor
       os_nova_flavor:
-         auth: "{{ os_auth }}"
          name: m1.tiny
          ram: 4096
          vcpus: 1
@@ -33,14 +43,13 @@
 
     - name: Create 'm1.small' flavor
       os_nova_flavor:
-         auth: "{{ os_auth }}"
          name: m1.small
          ram: 2048
          vcpus: 1
          disk: 6
 
     - name: Gather facts about the created flavors
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default flavor list -f json
+      shell: openstack flavor list -f json
       register: flavor_list
 
     - name: Display Flavors
