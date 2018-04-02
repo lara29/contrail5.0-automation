@@ -1,1 +1,12 @@
-
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# command example: ansible-playbook -i all.inv 01-contrail-server-manager.yml
+---
+- name: INSTALL OPENSTACK PYTHON CLIENT
+  hosts: contrail-ubuntu-host
+  gather_facts: false
+  
+  tasks:
+    - name: Install python-openstackclient
+      apt:
+        name: python-openstackclient
