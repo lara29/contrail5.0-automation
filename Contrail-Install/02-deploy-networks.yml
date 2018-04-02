@@ -3,10 +3,21 @@
 # command example: ansible-playbook -i all.inv 02-deploy-networks.yml
 ---
 - name: DEPLOY NETWORKS
-  hosts: contrail-ubuntu-vm
+  hosts: contrail-ubuntu-host
   gather_facts: false
+  vars:
+    openstackrc:
+      OS_AUTH_URL: http://keystone-api.openstack:35357/v3
+      OS_USERNAME: admin
+      OS_PASSWORD: password
+      OS_TENANT_NAME: admin
+      OS_IDENTITY_API_VERSION: 3
+      OS_USER_DOMAIN_NAME: Default
+      OS_PROJECT_DOMAIN_NAME: Default
+  
+  environment: "{{ openstackrc }}"
+  
   tasks:
-
     - name: Import variables from the file /vars/contrail.info into 'info' variable
       include_vars:
         file: contrail.info
@@ -14,13 +25,13 @@
 
     - name: Set necessary variables
       set_fact:
-        os_auth:
+        openstackrc:
           auth_url: http://keystone-api.openstack:35357/v3
           username: admin
           password: password
           project_name: admin
-          project_domain_name: default
-          user_domain_name: default
+          project_domain_name: Default
+          user_domain_name: Default
 
     - name: install shade
       pip:
@@ -54,7 +65,7 @@
       wait_for: timeout=5
 
     - name: Gather facts about previously created networks
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default network list -f json
+      shell: openstack network list -f json
       register: network_list
     - name: Display Networks
       set_fact:
@@ -66,7 +77,7 @@
           - "{{networks}}"
 
     - name: Gather facts about previously created subnets
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default subnet list -f json
+      shell: openstack subnet list -f json
       register: network_list
     - name: Display Subnets
       set_fact:
