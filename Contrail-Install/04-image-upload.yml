@@ -3,8 +3,19 @@
 # command example: ansible-playbook -i all.inv 04-image-upload.yml
 ---
 - name: IMAGE UPLOAD
-  hosts: contrail-ubuntu-vm
+  hosts: contrail-ubuntu-host
   gather_facts: false
+  vars:
+    openstackrc:
+      OS_AUTH_URL: http://keystone-api.openstack:35357/v3
+      OS_USERNAME: admin
+      OS_PASSWORD: password
+      OS_TENANT_NAME: admin
+      OS_IDENTITY_API_VERSION: 3
+      OS_USER_DOMAIN_NAME: Default
+      OS_PROJECT_DOMAIN_NAME: Default
+  
+  environment: "{{ openstackrc }}"
   tasks:
 
     - name: Import variables from the file /vars/contrail.info into 'info' variable
@@ -25,16 +36,15 @@
 
     - name: download ubuntu gui image
       get_url:
-        url: http://{{ info.contrail_package[0].file_server }}/gui-img-flat.vmdk
-        dest: /root/images/gui-img-flat.vmdk
+        url: http://releases.ubuntu.com/17.10/ubuntu-17.10.1-desktop-amd64.iso
+        dest: /root/images/gui-image.iso
 
     - name: Upload GUI Image
       os_image:
-        auth: "{{ os_auth }}"
         name: gui_image
         container_format: bare
         disk_format: vmdk
-        filename: /root/images/gui-img-flat.vmdk
+        filename: /root/images/gui-image.iso
         is_public: yes
 
     - name: Upload Primary Image 
@@ -65,7 +75,7 @@
         is_public: yes
 
     - name: Gather facts about previously created images
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default image list -f json
+      shell: openstack image list -f json
       register: image_list
 
     - name: Display Images
