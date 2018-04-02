@@ -41,43 +41,39 @@
         dest: /root/
         clone: yes
 
-    - name: Alter max glance image file size to 0
-      shell: |
-          sed -i 's/proxy-body-size: "1024M"/proxy-body-size: "0"/g' $osh_path/glance/values.yaml
-      
+    - name: Alter max glance image file size to 0 to allow files of any size to be uploaded to glance
+      replace:
+        path: $osh_path/glance/values.yaml
+        regexp: 'proxy-body-size: "1024M"'
+        replace: 'proxy-body-size: "0"'
       environment: "{{ deploy_env }}"
-      args:
-        executable: /bin/bash
         
     - name: Run the deployment script
       script: deploy_commands.sh
       environment: "{{ deploy_env }}"
       
-    - name: Display kubectl pods status
-      shell: |
-        kubectl get pods --all-namespaces
-        NOT_RUNNING=`kubectl get pods --all-namespaces | awk '{if(NR>1)print}'| awk '{ print $4 }'| grep -v "Running"|wc -l`
+    - shell: |
+        kubectl get pods --all-namespaces | tee kube_status.txt
       args:
         executable: /bin/bash
-      register: pod_result
-      
+      register: pod_status
+
     - debug:
-        var: pod_result.stdout_lines
-        verbosity: 5
-        
-    - set_fact: pods_not_running="{{ lookup('env','NOT_RUNNING') }}"
+        var: pod_status.stdout_lines
 
-    - name: Throw error and stop execution if any of the pods not in running status
-      fail:
-         msg: All the pods need to be in running state
-      when: 
-          
-    - name: Wait for the Provisioning Process to complete
-      shell: cat /var/log/contrail-server-manager/debug.log
-      register: results
+    - shell: |
+        awk '{if(NR>1)print}' kube_status.txt|awk '{ print $4 }'| grep -v "Running"|wc -l
       args:
         executable: /bin/bash
-      until: results.stdout.find("Process Done") != -1
-      retries: 120
-      delay: 20
+      register: not_running
 
+    - debug:
+        var: not_running.stdout_lines
+
+    - fail:
+        msg: All pods need to be in running state
+      when: not_running.stdout != "0" 
+          
+    - name: Install python-openstackclient
+      apt:
+        name: python-openstackclient
