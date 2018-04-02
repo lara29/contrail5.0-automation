@@ -56,15 +56,19 @@
     - name: Display kubectl pods status
       shell: |
         kubectl get pods --all-namespaces
+        NOT_RUNNING=`kubectl get pods --all-namespaces | awk '{if(NR>1)print}'| awk '{ print $4 }'| grep -v "Running"|wc -l`
       args:
         executable: /bin/bash
-      register: result
+      register: pod_result
       
     - debug:
-        var: result.stdout_lines
+        var: pod_result.stdout_lines
         verbosity: 5
 
-    - name: Throw error and stop execution if any of the pods not in running state
+    - name: Throw error and stop execution if any of the pods not in running status
+      fail:
+         msg: All the pods need to be in running state
+      when: pod_result
           
     - name: Wait for the Provisioning Process to complete
       shell: cat /var/log/contrail-server-manager/debug.log
