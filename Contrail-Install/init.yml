@@ -3,7 +3,7 @@
 # command example: ansible-playbook -i all.inv init.yml
 ---
 - name: Get Ansible to work on bare Ubuntu 16.04
-  hosts: contrail-ubuntu-vm
+  hosts: contrail-ubuntu-host
   gather_facts: no
   tasks:
     - name: 'install python2'
