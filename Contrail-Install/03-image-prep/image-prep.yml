@@ -15,12 +15,12 @@
 
   - name: copy the firstboot shell scripts required
     copy:
-      src: /root/Contrail_Automation/Contrail-Install/03-image-prep/firstboots
+      src: /root/contrail5.0-automation/Contrail-Install/03-image-prep/firstboots
       dest: /root/
       
   - name: copy the config shell scripts required
     copy:
-      src: /root/Contrail_Automation/Contrail-Install/03-image-prep/configs
+      src: /root/contrail5.0-automation/Contrail-Install/03-image-prep/configs
       dest: /root/
 
   - name: Install libguestfs tools
