@@ -9,9 +9,9 @@ host_vm:
   -
     hostname: 'ubuntu'
     ubuntu_version: 'xenial'
-    password: 'c0ntrail123'
+    password: 'juniper123'
     management_interface: 'eno3'
     mac_address: '14:18:77:46:05:67'
-    ip_address: '10.10.7.205/20'
+    ip_address: '10.10.7.149/20'
     default_gateway: '10.10.10.1'
 
