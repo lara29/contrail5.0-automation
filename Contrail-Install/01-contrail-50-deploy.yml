@@ -8,9 +8,9 @@
   vars:
     deploy_env:
       base_dir: /root/
-      osh_path: ${base_dir}/openstack-helm
-      osh_infra_path: ${base_dir}/openstack-helm-infra
-      chd_path: ${base_dir}/contrail-helm-deployer
+      osh_path: /root/openstack-helm
+      osh_infra_path: /root/openstack-helm-infra
+      chd_path: /root/contrail-helm-deployer
       
   tasks:
 
@@ -26,20 +26,23 @@
     - name: Get openstack-helm repository
       git:
         repo: https://github.com/Juniper/openstack-helm.git
-        dest: /root/
+        dest: /root/openstack-helm
         clone: yes
+        force: yes
         
     - name: Get openstack-helm-infra repository
       git:
         repo: https://github.com/Juniper/openstack-helm-infra.git
-        dest: /root/
+        dest: /root/openstack-helm-infra
         clone: yes
+        force: yes
         
     - name: Get contrail-helm-deployer repository
       git:
         repo: https://github.com/Juniper/contrail-helm-deployer.git
-        dest: /root/
+        dest: /root/contrail-helm-deployer
         clone: yes
+        force: yes
 
     - name: Alter max glance image file size to 0 to allow files of any size to be uploaded to glance
       replace:
@@ -50,7 +53,6 @@
         
     - name: Run the deployment script
       script: deploy_commands.sh
-      environment: "{{ deploy_env }}"
       
     - shell: |
         kubectl get pods --all-namespaces|tee kube_status.txt
