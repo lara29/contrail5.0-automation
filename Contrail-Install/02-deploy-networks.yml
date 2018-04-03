@@ -42,7 +42,7 @@
 
     - name: copy the scripts required
       copy:
-        src: /root/Contrail_Automation/Contrail-Install/deploy-networks.yml
+        src: /root/contrail5.0-automation/Contrail-Install/deploy-networks.yml
         dest: /root/scripts/
 
     - name: Add heat_stack_owner role
