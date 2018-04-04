@@ -28,7 +28,7 @@ read -p 'Enter Mac Address (14:18:77:46:05:67): ' mac_address
 mac_address=${mac_address:-14:18:77:46:05:67}
 
 read -p 'Enter IP Address (10.10.7.205/20): ' ip_address
-ip_address=${ip_address:-10.10.7.149/20}
+ip_address=${ip_address:-10.10.7.150/20}
 
 read -p 'Enter Default Gateway (10.10.10.1): ' default_gateway
 default_gateway=${default_gateway:-10.10.10.1}
