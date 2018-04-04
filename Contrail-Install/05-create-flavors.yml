@@ -34,17 +34,10 @@
           project_domain_name: default
           user_domain_name: default
 
-    - name: Create 'm1.tiny' flavor
-      os_nova_flavor:
-         name: m1.tiny
-         ram: 4096
-         vcpus: 1
-         disk: 5
-
     - name: Create 'm1.small' flavor
       os_nova_flavor:
-         name: m1.small
-         ram: 2048
+         name: small
+         ram: 4096
          vcpus: 1
          disk: 6
 
