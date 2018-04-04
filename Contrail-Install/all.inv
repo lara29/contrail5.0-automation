@@ -2,7 +2,7 @@
 localhost ansible_connection=local
 
 [contrail-ubuntu-host]
-10.10.7.149
+10.10.7.150
 
 [contrail-file-server]
 10.10.7.202
