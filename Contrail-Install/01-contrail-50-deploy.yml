@@ -53,11 +53,11 @@
         
     - name: Copy the deploy-commands.sh to the host
       copy:
-        src: /root/contrail5.0-automation/Contrail_Install/deploy-commands.sh
+        src: /root/contrail5.0-automation/Contrail-Install/deploy-commands.sh
         dest: /root
         
     - name: Run the deployment script
-      script: deploy_commands.sh
+      script: deploy-commands.sh
       
     - shell: |
         kubectl get pods --all-namespaces|tee kube_status.txt
