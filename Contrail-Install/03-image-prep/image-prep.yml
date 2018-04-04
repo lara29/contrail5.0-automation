@@ -94,7 +94,7 @@
 
   - name: Check if secondary webserver image prep script is present
     stat:
-      path: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-sec-image.sh
+      path: /root/contrail5.0-automation/Contrail-Install/03-image-prep/create-ws-sec-image.sh
     register: ws_sec_sym_prep
 
   - debug:
@@ -102,7 +102,7 @@
     when: ws_sec_sym_prep.stat.exists == "False"
 
   - name: Prepare Secondary Webserver image
-    script: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-sec-image.sh
+    script: /root/contrail5.0-automation/Contrail-Install/03-image-prep/create-ws-sec-image.sh
 
   - name: Check if primary webserver first-boot file is present
     stat:
@@ -115,7 +115,7 @@
 
   - name: Check if Primary webserver image prep script is present
     stat:
-      path: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-primary-image.sh
+      path: /root/contrail5.0-automation/Contrail-Install/03-image-prep/create-ws-primary-image.sh
     register: ws_pri_sym_prep
 
   - debug:
@@ -123,7 +123,7 @@
     when: ws_pri_sym_prep.stat.exists == "False"
 
   - name: Prepare Primary Webserver image
-    script: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-ws-primary-image.sh
+    script: /root/contrail5.0-automation/Contrail-Install/03-image-prep/create-ws-primary-image.sh
 
   - name: Check if DB Server first-boot file is present
     stat:
@@ -136,7 +136,7 @@
 
   - name: Check if DB server image prep script is present
     stat:
-      path: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-db-image.sh
+      path: /root/contrail5.0-automation/Contrail-Install/03-image-prep/create-db-image.sh
     register: db_sym_prep
 
   - debug:
@@ -144,5 +144,5 @@
     when: db_sym_prep.stat.exists == "False"
 
   - name: Prepare DB Webserver image
-    script: /root/Contrail_Automation/Contrail-Install/03-image-prep/create-db-image.sh
+    script: /root/contrail5.0-automation/Contrail-Install/03-image-prep/create-db-image.sh
 
