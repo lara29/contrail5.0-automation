@@ -58,7 +58,7 @@
         auth: "{{ os_auth }}"
         name: db
         image: db_image
-        flavor: m1.tiny
+        flavor: small
         nics:
           - net-id: "{{ db_network_id[0] }}"
         security_groups: default
@@ -86,7 +86,7 @@
         auth: "{{ os_auth }}"
         name: webserver_secondary
         image: webserver-secondary_image
-        flavor: m1.tiny
+        flavor: small
         nics:
           - net-id: "{{ webserver_network_id[0] }}"
         security_groups: default
@@ -114,7 +114,7 @@
         auth: "{{ os_auth }}"
         name: webserver_primary
         image: webserver-primary_image
-        flavor: m1.tiny
+        flavor: small
         nics:
           - net-id: "{{ webserver_network_id[0] }}"
         security_groups: default
@@ -134,7 +134,7 @@
         auth: "{{ os_auth }}"
         name: gui
         image: gui_image
-        flavor: m1.small
+        flavor: small
         nics:
           - net-id: "{{ gui_network_id[0] }}"
         security_groups: default
