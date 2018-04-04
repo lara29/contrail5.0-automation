@@ -45,12 +45,6 @@
         src: /root/contrail5.0-automation/Contrail-Install/deploy-networks.yml
         dest: /root/scripts/
 
-    - name: Add heat_stack_owner role
-      os_user_role:
-        user: admin
-        role: heat_stack_owner
-        project: admin
-
     - name: Install networks, subnet, and policy
       os_stack:
         auth: "{{ os_auth }}"
