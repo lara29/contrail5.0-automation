@@ -1,7 +1,8 @@
 #!/bin/bash
 # OPENSTACK 10 WITH CONTRAIL 4.1 INSTALLATION USING SERVER-MANAGER
 # Comannd example ./Contrail-Install.sh
-# Date written 2018 March 9
+# Authors: Lakshmi Rajan <lrajan@juniper.net> , Sudhishna Sendhilvelan <ssendhil@juniper.net>
+# Date: April 04, 2018
 
 echo ""
 echo "PROVIDE HOST VM DETAILS:"
