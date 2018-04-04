@@ -1,0 +1,21 @@
+hostname ubuntu-lara
+
+ubuntu-version xenial
+
+user root
+
+password juniper123
+
+interface eno3
+
+ip 10.10.7.150/20
+
+mac 14:18:77:46:05:67
+
+gateway 10.10.10.1
+
+cluster dc135
+
+openstacksku ocata
+
+osp-release 4.1.0.0
