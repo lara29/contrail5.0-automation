@@ -54,7 +54,7 @@
     - name: Copy local-vars.yaml
       copy:
         src: /root/contrail5.0-automation/Contrail-Install/local-vars.yaml
-        dest: ${osh_infra_path}/tools/gate/devel/local-vars.yaml
+        dest: ${osh_infra_path}/tools/gate/devel
         
     - name: Copy the deploy-commands.sh to the host
       copy:
