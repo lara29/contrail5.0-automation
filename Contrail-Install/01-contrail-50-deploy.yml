@@ -51,6 +51,11 @@
         replace: 'proxy-body-size: "0"'
       environment: "{{ deploy_env }}"
         
+    - name: Copy local-vars.yaml
+      copy:
+        src: /root/contrail5.0-automation/Contrail-Install/local-vars.yaml
+        dest: ${osh_infra_path}/tools/gate/devel/local-vars.yaml
+        
     - name: Copy the deploy-commands.sh to the host
       copy:
         src: /root/contrail5.0-automation/Contrail-Install/deploy-commands.sh
