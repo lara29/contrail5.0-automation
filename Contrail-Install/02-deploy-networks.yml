@@ -25,7 +25,7 @@
 
     - name: Set necessary variables
       set_fact:
-        openstackrc:
+        os_auth:
           auth_url: http://keystone-api.openstack:35357/v3
           username: admin
           password: password
