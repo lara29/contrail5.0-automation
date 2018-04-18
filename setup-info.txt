@@ -1,0 +1,3 @@
+targetip 10.10.7.205
+fileserverip 10.10.7.202
+mgmt-iface eno3
