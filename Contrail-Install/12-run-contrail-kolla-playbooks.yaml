@@ -1,1 +1,7 @@
-
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+---
+- name: Run the playbooks from contrail-ansible-deployer
+  hosts: inventory
+  import-playbook: playbooks/configure_instances.yml
+  import-playbook: playbooks/install_contrail.yml orchestrator=openstack 
