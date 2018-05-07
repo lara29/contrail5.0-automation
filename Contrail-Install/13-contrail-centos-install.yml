@@ -1,0 +1,25 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+---
+- name: Deploy Contrail 5.0 using contrail-ansible-deployer
+  hosts: contrail-host
+  gather_facts: false
+  tasks:
+  - name: Get epel release
+    yum:
+      name: epel-release
+      state: latest
+  - name: Get Ansible
+    yum:
+      name: ansible-2.4.2.0
+      state: present
+  - name: Get git
+    yum:
+      name: git
+      state: present
+  - name: Get git repo
+    git:
+      repo: https://github.com/Juniper/contrail-ansible-deployer.git
+      dest: /root/contrail-ansible-deployer
+      clone: yes
+      force: yes
