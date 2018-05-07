@@ -1,10 +1,30 @@
 # Copyright 2018, Juniper Networks Pvt Ltd.
 # All rights reserved.
 ---
-- name: Install Openstack client
+- name: Post install tasks
   hosts: contrail-host
   gather_facts: false
   tasks:
+  - shell: |
+        kubectl get pods --all-namespaces|tee kube_status.txt
+      args:
+        executable: /bin/bash
+      register: pod_status
+  - debug:
+      var: pod_status.stdout_lines
+
+  - shell: |
+      awk '{if(NR>1)print}' kube_status.txt|awk '{ print $4 }'| grep -v "Running"|wc -l
+    args:
+      executable: /bin/bash
+    register: not_running
+  - debug:
+      var: not_running.stdout_lines
+
+  - fail:
+      msg: All pods need to be in running state
+    when: not_running.stdout != "0" 
+      
   - name: Install gcc
     yum:
       name: gcc
