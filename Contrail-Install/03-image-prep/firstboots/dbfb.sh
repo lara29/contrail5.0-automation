@@ -6,7 +6,5 @@ sudo mysql -u root -e "GRANT ALL ON wordpress.* TO 'wpuser' IDENTIFIED BY 'passw
 sudo mysql -u root -e "FLUSH PRIVILEGES;"
 sudo mysql -u root -e "EXIT;"
 
-touch /root/completed
-
 #Delete me
 rm $0
