@@ -227,6 +227,10 @@ echo "##############################################################"
 echo ""
 echo ""
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/01-contrail-50-deploy.yml
+cd contrail-ansible-deployer
+ansible-playbook -i inventory/ playbooks/configure_instances.yml
+ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
+
 echo "################# Contrail Deploy - Complete #################"
 sleep 5
 
