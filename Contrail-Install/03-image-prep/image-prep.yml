@@ -3,7 +3,7 @@
 # command example: ansible-playbook -i all.inv image-prep.yml
 ---
 - name: PREPARE IMAGES
-  hosts: contrail-ubuntu-host
+  hosts: contrail-host
   gather_facts: false
   environment:
     LIBGUESTFS_BACKEND: direct
@@ -37,23 +37,6 @@
     apt:
       name: jq
       state: present
-      
-  - name: Check if file guestfs_patched exists
-    stat:
-      path: /root/guestfs_patched
-    register: patch_result
-
-  - name: Workaround for Ubuntu Xenial (https://bugs.launchpad.net/ubuntu/+source/isc-dhcp/+bug/1650740)
-    shell: |
-      tar -xzf init.tar.gz
-      sed -i '/if test "$guestfs_network" = 1; then/a\ \ \ \ touch /etc/fstab' init
-      tar -czvf init.tar.gz init
-      rm init
-      touch /root/guestfs_patched
-    args:
-      executable: /bin/bash
-      chdir: /usr/lib/x86_64-linux-gnu/guestfs/supermin.d
-    when: patch_result.stat.exists == False
 
   - name: Get the latest ubuntu xenial cloud image url
     shell: |
