@@ -1,5 +1,5 @@
 #!/bin/bash
-# OPENSTACK 10 WITH CONTRAIL 4.1 INSTALLATION USING SERVER-MANAGER
+# OPENSTACK OCATA
 # Comannd example ./Contrail-Install.sh
 # Authors: Sudhishna Sendhilvelan <ssendhil@juniper.net>, Lakshmi Rajan <lrajan@juniper.net>
 # Date written 2018 March 9
@@ -202,17 +202,17 @@ host_vm:
 
 echo ""
 echo ""
-echo "##############################################################"
+echo "**************************************************************"
 echo "                     CONTRAIL SETUP BEGINS"
-echo "##############################################################"
+echo "**************************************************************"
 echo ""
 echo ""
 
 echo ""
 echo ""
-echo "##############################################################"
+echo "**************************************************************"
 echo "              Initialize the Destination VM"
-echo "##############################################################"
+echo "**************************************************************"
 echo ""
 echo ""
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/init.yml
@@ -226,7 +226,7 @@ echo "                      Contrail Deploy"
 echo "##############################################################"
 echo ""
 echo ""
-ansible-playbook -i Contrail-Install/all.inv Contrail-Install/01-contrail-50-deploy.yml
+ansible-playbook -i Contrail-Install/all.inv Contrail-Install/11-contrail-centos-deploy.yml
 cd contrail-ansible-deployer
 ansible-playbook -i inventory/ playbooks/configure_instances.yml
 ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
@@ -234,6 +234,7 @@ ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contr
 echo "################# Contrail Deploy - Complete #################"
 sleep 5
 
+ansible-playbook -i Contrail-Install/all.inv Contrail-Install/12-post-deploy.yml
 echo ""
 echo ""
 echo "##############################################################"
