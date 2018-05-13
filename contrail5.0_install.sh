@@ -11,18 +11,14 @@ echo "" > $DATA_PATH
 echo ""
 echo " **************************************************"
 echo "      CONTRAIL HA-WEBSERVER DEPLOYMENT PROCESS"
+echo "         BMS - SINGLE INTERFACE ALL-IN-ONE"
 echo " **************************************************"
 echo ""
-read -p "Enter the provider type (bms): " provider
-read -p "Enter Contrail Host IP Address ($ip): " tempip
-ip=${tempip:-$ip}
-read -s -p "Enter Contrail Host Password ($password): " temppassword
-password=${temppassword:-$password}
+read -p "Enter Contrail Host IP Address (x.x.x.x) : " ip
+read -s -p "Enter Contrail Host Password : " password
 echo ""
-read -p "Enter Management Interface Name ($miface): " tempiface
-miface=${tempiface:-$miface}
-read -p "Enter File Server Ip ($file_server): " tfs
-file_server=${tfs:-$file_server}
+read -p "Enter Management Interface Name : " miface
+read -p "Enter File Server Ip : " file_server
 
 # Write the ip addresses into the inventory file used by Ansible
 IFS='/' read -r -a vm_ip <<< "$ip"
@@ -78,8 +74,6 @@ echo " * MGMT IFACE        : $miface"
 echo ""
 echo " * IP ADDRESS/CIDR   : $ip"
 echo ""
-echo " * PASSWORD          : ************"
-echo ""
 echo " * GATEWAY           : $gw"
 echo ""
 echo " * MAC ADDRESS       : $mac"
@@ -95,11 +89,19 @@ while true; do
     esac
 done
 
+# WRITING THE CONTRAIL HOST IP AND PASSWORD INTO BMS_AIO.YAML
+
+
+
 echo ""
 echo " **************************************************"
-echo "Setup configuration parameters from instances.yaml
+echo "Setup configuration parameters from bms_aio.yaml
 echo " **************************************************"
-cat 
+cat  
+
+
+
+
   echo "           CONTRAIL SETUP DETAILS"
   echo " ********************************************"
   echo ""
