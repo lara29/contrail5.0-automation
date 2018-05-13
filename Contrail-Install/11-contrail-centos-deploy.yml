@@ -23,19 +23,8 @@
       src: ~/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
       dest: ~/
       remote_src: yes
-        
-  - name: Get epel release
-    yum:
-      name: epel-release
-      state: latest
-      
-  - name: Get Ansible
-    yum:
-      name: ansible-2.4.2.0
-      state: present
       
   - name: parametrized template - a
     template:
       src: ~/Contrail_Automation/templates/contrail-install.j2
       dest: ~/contrail-ansible-deployer/config/instances.yaml
-      
