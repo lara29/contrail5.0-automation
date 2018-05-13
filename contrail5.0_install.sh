@@ -17,6 +17,8 @@ echo ""
 read -p "Enter Management Interface Name : " miface
 read -p "Enter File Server Ip : " file_server
 
+contrail_version=5.0.0-0.40
+
 # Write the ip addresses into the inventory file used by Ansible
 IFS='/' read -r -a vm_ip <<< "$ip"
 IFS='/' read -r -a file_ip <<< "$file_server"
@@ -64,6 +66,30 @@ while true; do
 done
 
 while true; do
+  echo ""
+  echo ""
+  echo " ********************************************"
+  echo "           CONTRAIL PACKAGE DETAILS"
+  echo " ********************************************" 
+  echo ""
+  echo " * VERSION          : $contrail_version"
+  read -p ' Confirm above details (Y?N) ? ' choice
+  case $choice in
+        [Yy]* ) break;;
+        [Nn]* )
+          echo ""
+          echo ""
+          echo "********************************************************"
+          read -p " Enter Hostname ($hostname): " tempversion
+          contrail_version=${tempversion:-$contrail_version}
+          echo "********************************************************"
+          break;;
+        * ) echo "Please answer y or n";;
+   esac
+ done
+
+
+while true; do
 echo ""
 echo " ********************************************"
 echo ""
@@ -79,15 +105,11 @@ echo ""
 
 echo "contrail_package:
   -
-    id: '$cluster_id'
     contrail_version: '$contrail_version'
-    package_sku: '$openstack_version'
-    openstack_release: '$openstack_release'
     file_server: '$file_server'
 host_vm:
   -
     hostname: '$hostname'
-    ubuntu_version: '$ubuntu_version'
     password: '$password'
     mac_address: '$mac'
     ip_address: '$ip'
