@@ -13,6 +13,7 @@ echo " **************************************************"
 echo "      CONTRAIL HA-WEBSERVER DEPLOYMENT PROCESS"
 echo " **************************************************"
 echo ""
+read -p "Enter the provider type (bms): " provider
 read -p "Enter Contrail Host IP Address ($ip): " tempip
 ip=${tempip:-$ip}
 read -s -p "Enter Contrail Host Password ($password): " temppassword
@@ -49,44 +50,60 @@ gw=`grep "gw" $DATA_PATH | awk -F' ' '{print $2}'`
 iface=`grep "iface" $DATA_PATH | awk -F' ' '{print $2}'`
 
 # Hardcoding values that may not change with deployment
-cluster_id=dc135
-ubuntu_version=xenial
-contrail_version=4.1.0.0-8
-openstack_version=ocata
-openstack_release=4.0.0
+provider=bms
+contrail_version=latest
+cloud_orchestrator=openstack
+auth_mode=keystone
+rabbitmq_node_port=5673
+keystone_auth_url_version=v3
+enable_haproxy=no
+kolla_internal_vip_address=10.10.7.149
+keystone_admin_password=contrail123
+
 echo "ubuntu-version $ubuntu_version" >> $DATA_PATH
 echo "contrail-version $contrail_version" >> $DATA_PATH
 echo "openstack-version $openstack_version" >> $DATA_PATH
 echo "openstack-release $openstack_release" >> $DATA_PATH
 echo "cluster-id $cluster_id" >> $DATA_PATH
 
+echo ""
+echo ""
+echo " ********************************************"
+echo "           TARGET MACHINE DETAILS"
+echo " ********************************************"
+echo ""
+echo " * HOSTNAME          : $hostname"
+echo ""
+echo " * MGMT IFACE        : $miface"
+echo ""
+echo " * IP ADDRESS/CIDR   : $ip"
+echo ""
+echo " * PASSWORD          : ************"
+echo ""
+echo " * GATEWAY           : $gw"
+echo ""
+echo " * MAC ADDRESS       : $mac"
+echo ""
+echo ""
+echo " ********************************************"
+read -p ' Confirm above details (Y?N) ? ' choice
 while true; do
-  echo ""
-  echo ""
-  echo " ********************************************"
-  echo "           TARGET MACHINE DETAILS"
-  echo " ********************************************"
-  echo ""
-  echo " * HOSTNAME          : $hostname"
-  echo ""
-  echo " * MGMT IFACE        : $miface"
-  echo ""
-  echo " * IP ADDRESS/CIDR   : $ip"
-  echo ""
-  echo " * PASSWORD          : ************"
-  echo ""
-  echo " * GATEWAY           : $gw"
-  echo ""
-  echo " * MAC ADDRESS       : $mac"
-  echo ""
-  echo " * UBUNTU OS VERSION : $ubuntu_version "
-  echo ""
-  echo ""
-  echo " ********************************************"
+  case $choice in
+        [Yy]* ) break;;
+        [Nn]* ) exit;;
+        * ) echo "Please answer y or n";;
+    esac
+done
+
+echo ""
+echo " **************************************************"
+echo "Setup configuration parameters from instances.yaml
+echo " **************************************************"
+cat 
   echo "           CONTRAIL SETUP DETAILS"
   echo " ********************************************"
   echo ""
-  echo " * CLUSTER ID        : $cluster_id"
+  echo " * CONTRAIL VERSION      : $cluster_id"
   echo ""
   echo " * CONTRAIL VERSION  : $contrail_version"
   echo ""
@@ -170,16 +187,15 @@ echo "##############################################################"
 echo ""
 echo ""
 
-echo ""
-echo ""
-echo "##############################################################"
-echo "                      Contrail Deploy"
-echo "##############################################################"
-echo ""
-echo ""
-ansible-playbook -i Contrail-Install/all.inv Contrail-Install/01-contrail-server-manager.yml
+ansible-playbook -i Contrail-Install/all.inv Contrail-Install/11-contrail-centos-deploy.yml
+cd contrail-ansible-deployer
+ansible-playbook -i inventory/ playbooks/configure_instances.yml
+ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
+
 echo "################# Contrail Deploy - Complete #################"
 sleep 5
+
+ansible-playbook -i Contrail-Install/all.inv Contrail-Install/12-post-deploy.yml 
 
 echo ""
 echo ""
