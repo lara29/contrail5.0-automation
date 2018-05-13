@@ -1,7 +1,16 @@
 # Copyright 2018, Juniper Networks Pvt Ltd.
 # All rights reserved.
 ---
-- name: Run the playbooks from contrail-ansible-deployer
-  hosts: inventory
-  import-playbook: playbooks/configure_instances.yml
-  import-playbook: playbooks/install_contrail.yml orchestrator=openstack 
+- name: Prepare the centos VM for deployment
+  hosts: contrail-ubuntu-vm
+  gather_facts: no
+  tasks:
+    - name: Get epel release
+      yum:
+        name: epel-release
+        state: latest
+      
+    - name: Get Ansible
+      yum:
+        name: ansible-2.4.2.0
+        state: present
