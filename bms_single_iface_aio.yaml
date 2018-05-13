@@ -1,0 +1,32 @@
+provider_config:
+  bms:
+    ssh_pwd: xx
+    ssh_user: root
+    ntpserver: pool.ntp.org
+    domainsuffix: local
+instances:
+  bms1:
+    provider: bms
+    ip: x.x.x.x
+    roles:
+      config_database:
+      config:
+      control:
+      analytics_database:
+      analytics:
+      webui:
+      vrouter:
+      openstack:
+      openstack_compute:
+contrail_configuration:
+  RABBITMQ_NODE_PORT: 5673
+  CONTRAIL_VERSION: latest
+  CLOUD_ORCHESTRATOR: openstack
+  AUTH_MODE: keystone
+  KEYSTONE_AUTH_URL_VERSION: /v3
+kolla_config:
+  kolla_globals:
+    enable_haproxy: no
+    kolla_internal_vip_address: x.x.x.x
+  kolla_passwords:
+    keystone_admin_password: contrail123
