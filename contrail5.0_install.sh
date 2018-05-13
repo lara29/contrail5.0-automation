@@ -5,9 +5,6 @@
 # Date written 2018 March 9
 
 HOME_DIR=/root/
-DATA_PATH=$HOME_DIR/Contrail_Automation/contrail-host-data.txt
-echo "" > $DATA_PATH
-
 echo ""
 echo " **************************************************"
 echo "      CONTRAIL HA-WEBSERVER DEPLOYMENT PROCESS"
@@ -39,29 +36,6 @@ echo ""
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/init.yml
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/contrail-host-facts.yaml --extra-vars "iface=$miface"
 
-hostname=`grep "hostname" $DATA_PATH | awk -F' ' '{print $2}'`
-ip=`grep "ip" $DATA_PATH | awk -F' ' '{print $2}'`
-mac=`grep "mac" $DATA_PATH | awk -F' ' '{print $2}'`
-gw=`grep "gw" $DATA_PATH | awk -F' ' '{print $2}'`
-iface=`grep "iface" $DATA_PATH | awk -F' ' '{print $2}'`
-
-# Hardcoding values that may not change with deployment
-provider=bms
-contrail_version=latest
-cloud_orchestrator=openstack
-auth_mode=keystone
-rabbitmq_node_port=5673
-keystone_auth_url_version=v3
-enable_haproxy=no
-kolla_internal_vip_address=10.10.7.149
-keystone_admin_password=contrail123
-
-echo "ubuntu-version $ubuntu_version" >> $DATA_PATH
-echo "contrail-version $contrail_version" >> $DATA_PATH
-echo "openstack-version $openstack_version" >> $DATA_PATH
-echo "openstack-release $openstack_release" >> $DATA_PATH
-echo "cluster-id $cluster_id" >> $DATA_PATH
-
 echo ""
 echo ""
 echo " ********************************************"
@@ -85,66 +59,6 @@ while true; do
   case $choice in
         [Yy]* ) break;;
         [Nn]* ) exit;;
-        * ) echo "Please answer y or n";;
-    esac
-done
-
-# WRITING THE CONTRAIL HOST IP AND PASSWORD INTO BMS_AIO.YAML
-
-
-
-echo ""
-echo " **************************************************"
-echo "Setup configuration parameters from bms_aio.yaml
-echo " **************************************************"
-cat  
-
-
-
-
-  echo "           CONTRAIL SETUP DETAILS"
-  echo " ********************************************"
-  echo ""
-  echo " * CONTRAIL VERSION      : $cluster_id"
-  echo ""
-  echo " * CONTRAIL VERSION  : $contrail_version"
-  echo ""
-  echo " * OPENSTACK SKU     : $openstack_version"
-  echo ""
-  echo " * OPENSTACK RELEASE : $openstack_release"
-  echo ""
-  echo " * FILE SERVER       : $file_server"
-  echo ""
-  echo " ********************************************"
-
-  read -p ' Confirm above details (Y?N) ? ' choice
-  case $choice in
-        [Yy]* ) break;;
-        [Nn]* )
-          echo ""
-          echo ""
-          echo "Enter new values, or press enter to accept default values"
-          echo "********************************************************"
-          echo "TARGET MACHINE DETAILS: "
-          read -p " Enter Hostname ($hostname): " temp
-          hostname=${temp:-$hostname}
-          read -p " Enter Default Gateway ($gw): " temp
-          gw=${temp:-$gw}
-          read -p " Enter Mac Address ($mac): " temp
-          mac=${temp:-$mac}
-          read -p " Enter Ubuntu Version ($ubuntu_version): " temp
-          ubuntu_version=${temp:-$ubuntu_version}
-          echo "SETUP DETAILS: "
-          read -p " Enter cluster id ($cluster_id): " temp
-          cluster_id=${temp:-$cluster_id}
-          read -p " Enter Contrail Version ($contrail_version): " temp
-          contrail_version=${temp:-$contrail_version}
-          read -p " Enter Openstack SKU ($openstack_version): " temp
-          openstack_version=${temp:-$openstack_version}
-          read -p " Enter openstack_release ($openstack_release): " temp
-          openstack_release=${temp:-$openstack_release}
-          clear
-          ;;
         * ) echo "Please answer y or n";;
     esac
 done
@@ -261,7 +175,7 @@ echo ""
 echo "################### CONTRAIL SETUP COMPLETE::: Please find the details below ###################"
 echo ""
 echo "                   ################## Openstack Dashboard #################"
-echo "                   Url: http://<host ip>:8898"
+echo "                   Url: http://<host ip>:80"
 echo "                   Username : admin"
 echo "                   Password: contrail123"
 echo ""
