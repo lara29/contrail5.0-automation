@@ -2,24 +2,40 @@
 # All rights reserved.
 ---
 - name: Deploy Contrail 5.0 using contrail-ansible-deployer
-  hosts: contrail-host
+  hosts: contrail-ubuntu-vm
   gather_facts: false
   tasks:
+  - name: Import variables from the file /vars/contrail.info into 'info' variable
+    include_vars:
+      file: contrail.info
+      name: info
+
+  - name: create packages directory
+    file: state=directory path=~/packages
+
+  - name: download contrail-ansible-deployer
+    get_url:
+        url: http://{{ info.contrail_package[0].file_server }}/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
+        dest: ~/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
+        
+  - name: Unarchive the contrail-ansible-deployer
+    unarchive:
+      src: ~/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
+      dest: ~/
+      remote_src: yes
+        
   - name: Get epel release
     yum:
       name: epel-release
       state: latest
+      
   - name: Get Ansible
     yum:
       name: ansible-2.4.2.0
       state: present
-  - name: Get git
-    yum:
-      name: git
-      state: present
-  - name: Get git repo
-    git:
-      repo: https://github.com/Juniper/contrail-ansible-deployer.git
-      dest: /root/contrail-ansible-deployer
-      clone: yes
-      force: yes
+      
+  - name: parametrized template - a
+    template:
+      src: ~/Contrail_Automation/templates/contrail-install.j2
+      dest: ~/contrail-ansible-deployer/config/instances.yaml
+      
