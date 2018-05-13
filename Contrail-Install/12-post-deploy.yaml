@@ -2,7 +2,7 @@
 # All rights reserved.
 ---
 - name: Post install tasks
-  hosts: contrail-host
+  hosts: contrail-ubuntu-vm
   gather_facts: false
   tasks:
   - shell: |
