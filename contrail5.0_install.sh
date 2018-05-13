@@ -83,6 +83,8 @@ while true; do
           read -p " Enter Hostname ($hostname): " tempversion
           contrail_version=${tempversion:-$contrail_version}
           echo "********************************************************"
+          echo ""
+          echo ""
           break;;
         * ) echo "Please answer y or n";;
    esac
@@ -124,11 +126,8 @@ echo "                     CONTRAIL SETUP BEGINS"
 echo "##############################################################"
 echo ""
 echo ""
-
+ansible-playbook -i Contrail-Install/all.inv Contrail-Install/10-centos-prep.yml
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/11-contrail-centos-deploy.yml
-cd contrail-ansible-deployer
-ansible-playbook -i inventory/ playbooks/configure_instances.yml
-ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
 
 echo "################# Contrail Deploy - Complete #################"
 sleep 5
