@@ -22,14 +22,13 @@
       wait_for: timeout=30
       
     - name: Restart server
-      command: /sbin/shutdown -h now
+      command: /sbin/shutdown -r
       async: 0
       poll: 0
       ignore_errors: true
       
-    - name: Wait for server to restart
-      local_action:
-        module: wait_for
-          port=22
-          delay=1
-          timeout=600
+    - name: The VM Restarts. Please wait for it to come back... 
+      wait_for_connection:
+        delay: 300
+        sleep: 20
+        timeout: 900
