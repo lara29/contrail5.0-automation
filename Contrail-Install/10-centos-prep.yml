@@ -22,7 +22,7 @@
       wait_for: timeout=30
       
     - name: Restart server
-      command: /sbin/shutdown -r
+      command: /sbin/shutdown -h now
       async: 0
       poll: 0
       ignore_errors: true
