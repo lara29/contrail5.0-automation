@@ -32,7 +32,7 @@ localhost ansible_connection=local
 ${vm_ip[0]}
 [contrail-file-server]
 ${file_ip[0]}
-" > /root/Contrail_Automation/Contrail-Install/all.inv
+" > /root/contrail5.0-automation/Contrail-Install/all.inv
 
 #Fetch necessary info from the target host
 echo ""
@@ -125,7 +125,7 @@ host_vm:
     ip_address: '$ip'
     default_gateway: '$gw'
     management_interface: '$miface'
-" > /root/Contrail_Automation/Contrail-Install/vars/contrail.info
+" > /root/contrail5.0-automation/Contrail-Install/vars/contrail.info
 
 echo ""
 echo ""
