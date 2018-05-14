@@ -21,13 +21,13 @@
     - name: sleep for 30 seconds and continue with play
       wait_for: timeout=30
       
-    - name: Restart server
-      command: /sbin/shutdown -r
+    - name: Reboot server
+      command: /sbin/shutdown -r now
       async: 0
       poll: 0
       ignore_errors: true
       
-    - name: The VM Restarts. Please wait for it to come back... 
+    - name: The contrail host is rebooting. Please wait for it to come back... 
       wait_for_connection:
         delay: 300
         sleep: 20
