@@ -6,15 +6,7 @@
   gather_facts: false
   tasks:
   - shell: |
-      kubectl get pods --all-namespaces|tee kube_status.txt
-    args:
-      executable: /bin/bash
-    register: pod_status
-  - debug:
-      var: pod_status.stdout_lines
-
-  - shell: |
-      awk '{if(NR>1)print}' kube_status.txt|awk '{ print $4 }'| grep -v "Running"|wc -l
+      docker ps|awk '{if(NR>1)print}'|awk '{print $7}'|grep -v "Up"|wc -l
     args:
       executable: /bin/bash
     register: not_running
