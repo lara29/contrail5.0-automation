@@ -18,9 +18,6 @@
     - name: upgrade all packages
       yum: name=* state=latest
       
-    - name: sleep for 30 seconds and continue with play
-      wait_for: timeout=30
-      
     - name: Reboot server
       command: /sbin/shutdown -r +1
       async: 0
