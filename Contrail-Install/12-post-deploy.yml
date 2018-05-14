@@ -6,10 +6,10 @@
   gather_facts: false
   tasks:
   - shell: |
-        kubectl get pods --all-namespaces|tee kube_status.txt
-      args:
-        executable: /bin/bash
-      register: pod_status
+      kubectl get pods --all-namespaces|tee kube_status.txt
+    args:
+      executable: /bin/bash
+    register: pod_status
   - debug:
       var: pod_status.stdout_lines
 
