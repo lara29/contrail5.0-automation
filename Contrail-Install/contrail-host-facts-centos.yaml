@@ -9,19 +9,10 @@
   - debug:
       msg: "{{ iface }}"
       
-  - name: Install sipcalc
-    apt:
-      name: sipcalc
-      
-  - name: Get the cidr of the network
-    shell: |
-      sipcalc "{{ iface }}" | grep 'Network mask (bits)' | awk 'NR==1' | awk -F ' ' '{print $5}'
-    register: cidr
-    args:
-      executable: /bin/bash
-
-  - debug:
-      msg: "{{ cidr.stdout }}"
+  - name: Install net-tools
+    yum:
+      name: net-tools
+      state: present
 
   - name: Get the hostname of the target
     shell: |
@@ -35,7 +26,7 @@
       
   - name: Get the mac of the network interface
     shell: |
-      /sbin/ifconfig "{{ iface }}" $1 | grep 'HWaddr' | awk -F ' ' '{print $5}'
+      /sbin/ifconfig "{{ iface }}" $1 | grep 'ether' | awk -F ' ' '{print $2}'
     register: mac
     args:
       executable: /bin/bash
@@ -55,7 +46,7 @@
 
   - name: Get the ip address of the network interface
     shell: |
-      /sbin/ifconfig "{{ iface }}" $1 | grep 'inet' | awk -F ' ' '{print $2}' | awk -F ':' '{print $2}' | awk 'NR==1'
+      /sbin/ifconfig "{{ iface }}" $1 | grep 'inet' | awk -F ' ' '{print $2}' | awk 'NR==1'
     register: ip
     args:
       executable: /bin/bash
