@@ -26,7 +26,7 @@
       
   - name: parametrized template - a
     template:
-      src: ~/Contrail_Automation/templates/bms_aio.j2
+      src: ~/contrail5.0-automation/templates/bms_aio.j2
       dest: ~/contrail-ansible-deployer/config/instances.yaml
 
   - name: Install contrail and kolla requirements
