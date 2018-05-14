@@ -5,6 +5,9 @@
 # Date written 2018 March 9
 
 HOME_DIR=/root/
+DATA_PATH=$HOME_DIR/Contrail_Automation/contrail-host-data.txt
+echo "" > $DATA_PATH
+
 echo ""
 echo " **************************************************"
 echo "      CONTRAIL HA-WEBSERVER DEPLOYMENT PROCESS"
@@ -37,6 +40,11 @@ echo "Fetching info from Contrail host..."
 echo ""
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/init.yml
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/contrail-host-facts-centos.yaml --extra-vars "iface=$miface"
+
+hostname=`grep "hostname" $DATA_PATH | awk -F' ' '{print $2}'`
+ip=`grep "ip" $DATA_PATH | awk -F' ' '{print $2}'`
+mac=`grep "mac" $DATA_PATH | awk -F' ' '{print $2}'`
+gw=`grep "gw" $DATA_PATH | awk -F' ' '{print $2}'`
 
 echo ""
 echo ""
