@@ -1,0 +1,73 @@
+# Copyright 2018, Juniper Networks Pvt Ltd.
+# All rights reserved.
+# Author: Lakshmi Rajan <lrajan@juniper.net>
+---
+- name: Collect facts from the contrail host machine
+  hosts: contrail-ubuntu-vm
+  gather_facts: no
+  tasks:
+  - debug:
+      msg: "{{ iface }}"
+      
+  - name: Install sipcalc
+    apt:
+      name: sipcalc
+      
+  - name: Get the cidr of the network
+    shell: |
+      sipcalc "{{ iface }}" | grep 'Network mask (bits)' | awk 'NR==1' | awk -F ' ' '{print $5}'
+    register: cidr
+    args:
+      executable: /bin/bash
+
+  - debug:
+      msg: "{{ cidr.stdout }}"
+
+  - name: Get the hostname of the target
+    shell: |
+      hostname
+    register: hostname
+    args:
+      executable: /bin/bash
+
+  - debug:
+      msg: "{{ hostname.stdout }}"
+      
+  - name: Get the mac of the network interface
+    shell: |
+      /sbin/ifconfig "{{ iface }}" $1 | grep 'HWaddr' | awk -F ' ' '{print $5}'
+    register: mac
+    args:
+      executable: /bin/bash
+
+  - debug:
+      msg: "{{ mac.stdout }}"
+      
+  - name: Get the gateway of the network interface
+    shell: |
+      ip route list dev "{{ iface }}" | awk ' /^default/ {print $3}'
+    register: gw
+    args:
+      executable: /bin/bash
+
+  - debug:
+      msg: "{{ gw.stdout }}"
+
+  - name: Get the ip address of the network interface
+    shell: |
+      /sbin/ifconfig "{{ iface }}" $1 | grep 'inet' | awk -F ' ' '{print $2}' | awk -F ':' '{print $2}' | awk 'NR==1'
+    register: ip
+    args:
+      executable: /bin/bash
+
+  - debug:
+      msg: "{{ ip.stdout }}"
+      
+  - local_action:
+      module: blockinfile
+      dest: "/root/Contrail_Automation/contrail-host-data.txt"
+      block: |
+        ip {{ ip.stdout }}/{{ cidr.stdout }}
+        mac {{ mac.stdout }}
+        gw {{ gw.stdout }}
+        hostname {{ hostname.stdout }}
