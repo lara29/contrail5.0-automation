@@ -5,7 +5,8 @@
   hosts: contrail-ubuntu-vm
   gather_facts: false
   tasks:
-  - shell: |
+  - name: Check if all the containers are running
+    shell: |
       docker ps|awk '{if(NR>1)print}'|awk '{print $7}'|grep -v "Up"|wc -l
     args:
       executable: /bin/bash
@@ -14,7 +15,7 @@
       var: not_running.stdout_lines
 
   - fail:
-      msg: All pods need to be in running state
+      msg: All containers need to be in "Up" state
     when: not_running.stdout != "0" 
       
   - name: Install gcc
