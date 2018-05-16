@@ -139,17 +139,6 @@ sleep 5
 ansible-playbook -i Contrail-Install/all.inv Contrail-Install/11-contrail-centos-deploy.yml
 sleep 5
 
-# ssh into remote and execute the ansible playbooks
-echo ""
-echo "Install contrail and kolla requirements"
-ssh root@$ip 'ansible-playbook -i ~/contrail-ansible-deployerinventory/ ~/contrail-ansible-deployerplaybooks/configure_instances.yml' 
-
-sleep 5
-
-echo ""
-echo "Deploy contrail and kolla containers"
-ssh root@$ip 'ansible-playbook -i ~/contrail-ansible-deployerinventory/ -e orchestrator=openstack ~/contrail-ansible-deployerplaybooks/install_contrail.yml'
-
 echo "################# Contrail Deploy - Complete #################"
 sleep 5
 
