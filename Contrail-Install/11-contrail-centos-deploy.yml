@@ -28,3 +28,17 @@
     template:
       src: ~/contrail5.0-automation/templates/bms_aio.j2
       dest: ~/contrail-ansible-deployer/config/instances.yaml
+      
+  - name: Install contrail and kolla requirements
+    shell: |
+      ansible-playbook -i inventory/ playbooks/configure_instances.yml
+    args:
+      executable: /bin/bash
+      chdir: ~/contrail-ansible-deployer
+    
+  - name: Deploy contrail and kolla containers
+    shell: |
+      ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
+    args:
+      executable: /bin/bash
+      chdir: ~/contrail-ansible-deployer
