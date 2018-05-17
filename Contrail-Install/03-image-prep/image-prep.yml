@@ -50,7 +50,7 @@
       chdir: /usr/lib/x86_64-linux-gnu/guestfs/supermin.d
     when: 
       patch_result.stat.exists == False
-      when: ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
   - name: Get the latest ubuntu xenial cloud image url
     shell: |
