@@ -7,7 +7,7 @@
   tasks:
   - name: Check if all the containers are running
     shell: |
-      docker ps|awk '{if(NR>1)print}'|awk '{print $7}'|grep -v "Up"|wc -l
+      docker ps --filter status=restarting|awk '{if(NR>1) print}'|wc -l
     args:
       executable: /bin/bash
     register: not_running
@@ -15,8 +15,8 @@
       var: not_running.stdout_lines
 
   - fail:
-      msg: All containers need to be in "Up" state
-    when: not_running.stdout != "0" 
+      msg: No containers should  be in "restarting" state
+    when: not_running.stdout == "0" 
       
   - name: Install gcc
     yum:
