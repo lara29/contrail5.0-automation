@@ -33,11 +33,6 @@
           project_domain_name: Default
           user_domain_name: Default
 
-    - name: install shade
-      pip:
-        name: shade
-        state: latest
-
     - name: create scripts directory
       file: state=directory path=~/scripts
 
