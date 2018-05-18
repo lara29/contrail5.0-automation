@@ -22,26 +22,6 @@
     copy:
       src: /root/contrail5.0-automation/Contrail-Install/03-image-prep/configs
       dest: /root/
-
-  - name: Install libguestfs
-    apt:
-      name: libguestfs
-      state: present
-      
-  - name: Install libguestfs tools
-    apt:
-      name: libguestfs-tools
-      state: present
-
-  - name: Install simplestreams
-    apt:
-      name: simplestreams
-      state: present
-
-  - name: Install jq
-    apt:
-      name: jq
-      state: present
       
   - name: Workaround for Ubuntu Xenial (https://bugs.launchpad.net/ubuntu/+source/isc-dhcp/+bug/1650740)
     shell: |
