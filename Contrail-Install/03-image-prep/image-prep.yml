@@ -23,6 +23,11 @@
       src: /root/contrail5.0-automation/Contrail-Install/03-image-prep/configs
       dest: /root/
 
+  - name: Install libguestfs
+    apt:
+      name: libguestfs
+      state: present
+      
   - name: Install libguestfs tools
     apt:
       name: libguestfs-tools
