@@ -34,8 +34,7 @@
       executable: /bin/bash
       chdir: /usr/lib/x86_64-linux-gnu/guestfs/supermin.d
     when: 
-      patch_result.stat.exists == False
-      ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+      patch_result.stat.exists == False and ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
   - name: Get the latest ubuntu xenial cloud image url
     shell: |
