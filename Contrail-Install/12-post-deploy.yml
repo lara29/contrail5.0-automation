@@ -41,3 +41,23 @@
     pip:
       name: python-ironicclient
       state: latest
+      
+  - name: Install libguestfs
+    yum:
+      name: libguestfs
+      state: present
+      
+  - name: Install libguestfs tools
+    yum:
+      name: libguestfs-tools
+      state: present
+
+  - name: Install simplestreams
+    yum:
+      name: simplestreams
+      state: present
+
+  - name: Install jq
+    yum:
+      name: jq
+      state: present
