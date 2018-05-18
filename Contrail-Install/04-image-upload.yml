@@ -7,7 +7,7 @@
   gather_facts: false
   vars:
     openstackrc:
-      OS_AUTH_URL: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+      OS_AUTH_URL: http://{{ info.host_vm[0].ip_address}}:35357/v3
       OS_USERNAME: admin
       OS_PASSWORD: contrail123
       OS_TENANT_NAME: admin
@@ -26,7 +26,7 @@
     - name: Set necessary variables
       set_fact:
         os_auth:
-          auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
+          auth_url: http://{{ info.host_vm[0].ip_address }}:35357/v3
           username: admin
           password: contrail123
           project_name: admin
