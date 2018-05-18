@@ -22,15 +22,16 @@
     yum:
       name: gcc
       state: latest
+      
   - name: Install python-devel
     yum:
       name: python-devel
       state: latest
+      
   - name: Install python-openstackclient
-    yum:
+    pip:
       name: python-openstackclient
-      state: latest
+
   - name: Install python-ironicclient
-    yum:
+    pip:
       name: python-ironicclient
-      state: latest
