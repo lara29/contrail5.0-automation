@@ -36,7 +36,9 @@
   - name: Install python-openstackclient
     pip:
       name: python-openstackclient
+      state: latest
 
   - name: Install python-ironicclient
     pip:
       name: python-ironicclient
+      state: latest
