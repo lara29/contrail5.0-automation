@@ -10,13 +10,13 @@
       docker ps --filter status=restarting|awk '{if(NR>1) print}'|wc -l
     args:
       executable: /bin/bash
-    register: not_running
+    register: restarting_ones
   - debug:
-      var: not_running.stdout_lines
+      var: restarting_ones.stdout_lines
 
   - fail:
       msg: No containers should  be in "restarting" state
-    when: not_running.stdout == "0" 
+    when: restarting_ones.stdout == "0" 
       
   - name: Install gcc
     yum:
