@@ -3,7 +3,7 @@
 # command example: ansible-playbook -i all.inv image-prep.yml
 ---
 - name: PREPARE IMAGES
-  hosts: contrail-host
+  hosts: contrail-ubuntu-vm
   gather_facts: false
   environment:
     LIBGUESTFS_BACKEND: direct
