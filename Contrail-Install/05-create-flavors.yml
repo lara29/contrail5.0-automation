@@ -28,7 +28,7 @@
         os_auth:
           auth_url: http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3
           username: admin
-          password: password
+          password: contrail123
           project_name: admin
           os_tenant_name: admin
           project_domain_name: default
