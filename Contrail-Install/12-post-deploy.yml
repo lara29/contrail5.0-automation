@@ -22,11 +22,20 @@
     yum:
       name: gcc
       state: latest
+  
+  - name: Install openssl-devel
+    yum:
+      name: openssl-devel
+      state: latest
+      
    
   - name: Install python-pip
     yum:
       name: python-pip
       state: latest
+      
+  - name: Upgrade pip
+    raw: pip install --upgrade pip
       
   - name: Install python-devel
     yum:
