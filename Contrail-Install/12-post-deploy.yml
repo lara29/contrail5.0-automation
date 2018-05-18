@@ -19,7 +19,7 @@
     when: restarting_ones.stdout != "0" 
       
   - name: Install shade
-    yum:
+    pip:
       name: shade
       
   - name: Install gcc
