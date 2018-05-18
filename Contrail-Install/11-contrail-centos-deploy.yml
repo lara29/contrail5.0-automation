@@ -11,34 +11,34 @@
       name: info
 
   - name: create packages directory
-    file: state=directory path=~/packages
+    file: state=directory path=/root/packages
 
   - name: download contrail-ansible-deployer
     get_url:
         url: http://{{ info.contrail_package[0].file_server }}/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
-        dest: ~/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
+        dest: /root/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
         
   - name: Unarchive the contrail-ansible-deployer
     unarchive:
-      src: ~/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
-      dest: ~/
+      src: /root/packages/contrail-ansible-deployer-{{ info.contrail_package[0].contrail_version }}.tar
+      dest: /root/
       remote_src: yes
       
   - name: parametrized template - a
     template:
-      src: ~/contrail5.0-automation/templates/bms_aio.j2
-      dest: ~/contrail-ansible-deployer/config/instances.yaml
+      src: /root/contrail5.0-automation/templates/bms_aio.j2
+      dest: /root/contrail-ansible-deployer/config/instances.yaml
       
   - name: Install contrail and kolla requirements
     shell: |
       ansible-playbook -i inventory/ playbooks/configure_instances.yml
     args:
       executable: /bin/bash
-      chdir: ~/contrail-ansible-deployer
+      chdir: /root/contrail-ansible-deployer
     
   - name: Deploy contrail and kolla containers
     shell: |
       ansible-playbook -i inventory/ -e orchestrator=openstack playbooks/install_contrail.yml
     args:
       executable: /bin/bash
-      chdir: ~/contrail-ansible-deployer
+      chdir: /root/contrail-ansible-deployer
