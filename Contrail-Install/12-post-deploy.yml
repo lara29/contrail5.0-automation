@@ -16,7 +16,7 @@
 
   - fail:
       msg: No containers should  be in "restarting" state
-    when: restarting_ones.stdout == "0" 
+    when: restarting_ones.stdout != "0" 
       
   - name: Install gcc
     yum:
