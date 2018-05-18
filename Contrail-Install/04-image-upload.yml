@@ -3,7 +3,7 @@
 # command example: ansible-playbook -i all.inv 04-image-upload.yml
 ---
 - name: IMAGE UPLOAD
-  hosts: contrail-ubuntu-host
+  hosts: contrail-ubuntu-vm
   gather_facts: false
   vars:
     openstackrc:
