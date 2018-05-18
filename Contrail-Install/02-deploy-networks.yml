@@ -36,6 +36,7 @@
     - name: install shade
       pip:
         name: shade
+        state: latest
 
     - name: create scripts directory
       file: state=directory path=~/scripts
