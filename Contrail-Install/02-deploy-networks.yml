@@ -3,7 +3,7 @@
 # command example: ansible-playbook -i all.inv 02-deploy-networks.yml
 ---
 - name: DEPLOY NETWORKS
-  hosts: contrail-host
+  hosts: contrail-ubuntu-vm
   gather_facts: false
   vars:
     openstackrc:
