@@ -22,6 +22,11 @@
     yum:
       name: gcc
       state: latest
+   
+  - name: Install python-pip
+    yum:
+      name: python-pip
+      state: latest
       
   - name: Install python-devel
     yum:
