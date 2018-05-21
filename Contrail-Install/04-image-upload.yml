@@ -30,6 +30,7 @@
 
     - name: Upload GUI Image
       os_image:
+        auth: "{{ os_auth }}"
         name: gui_image
         container_format: bare
         disk_format: vmdk
@@ -64,7 +65,7 @@
         is_public: yes
 
     - name: Gather facts about previously created images
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default image list -f json
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default image list -f json
       register: image_list
 
     - name: Display Images
