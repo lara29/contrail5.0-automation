@@ -5,17 +5,6 @@
 - name: IMAGE UPLOAD
   hosts: contrail-ubuntu-vm
   gather_facts: false
-  vars:
-    openstackrc:
-      OS_AUTH_URL: http://{{ info.host_vm[0].ip_address}}:35357/v3
-      OS_USERNAME: admin
-      OS_PASSWORD: contrail123
-      OS_TENANT_NAME: admin
-      OS_IDENTITY_API_VERSION: 3
-      OS_USER_DOMAIN_NAME: Default
-      OS_PROJECT_DOMAIN_NAME: Default
-  
-  environment: "{{ openstackrc }}"
   tasks:
 
     - name: Import variables from the file /vars/contrail.info into 'info' variable
