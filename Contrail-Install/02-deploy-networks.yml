@@ -41,7 +41,7 @@
       wait_for: timeout=5
 
     - name: Gather facts about previously created networks
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default network list -f json
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default network list -f json
       register: network_list
     - name: Display Networks
       set_fact:
@@ -53,7 +53,7 @@
           - "{{networks}}"
 
     - name: Gather facts about previously created subnets
-      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default subnet list -f json
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default subnet list -f json
       register: network_list
     - name: Display Subnets
       set_fact:
