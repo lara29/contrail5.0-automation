@@ -130,7 +130,7 @@
         timeout: 3600
 
     - name: Gather facts about the created servers
-      shell: openstack server list -f json
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default server list -f json
       register: server_list
 
     - name: Display Servers
@@ -139,4 +139,3 @@
     - debug:
         msg:
           - "{{servers}}"
-
