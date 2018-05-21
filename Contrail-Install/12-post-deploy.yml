@@ -52,11 +52,6 @@
       name: libguestfs-tools
       state: present
 
-  - name: Install simplestreams
-    yum:
-      name: simplestreams
-      state: present
-
   - name: Install jq
     yum:
       name: jq
