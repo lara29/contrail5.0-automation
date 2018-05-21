@@ -27,8 +27,17 @@
 
     - name: copy the scripts required
       copy:
-        src: /root/contrail5.0-automation/Contrail-Install/deploy-networks.yml
+        src: /root/Contrail_Automation/Contrail-Install/deploy-networks.yml
         dest: /root/scripts/
+
+    - name: Add heat_stack_owner role
+      os_user_role:
+        auth: "{{ os_auth }}"
+        user: admin
+        role: heat_stack_owner
+        project: admin
+      environment:
+        OS_IDENTITY_API_VERSION: 3
 
     - name: Install networks, subnet, and policy
       os_stack:
@@ -41,7 +50,7 @@
       wait_for: timeout=5
 
     - name: Gather facts about previously created networks
-      shell: openstack network list -f json
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default network list -f json
       register: network_list
     - name: Display Networks
       set_fact:
@@ -53,7 +62,7 @@
           - "{{networks}}"
 
     - name: Gather facts about previously created subnets
-      shell: openstack subnet list -f json
+      shell: openstack --os-auth-url "http://{{ info.host_vm[0].ip_address.split('/')[0] }}:35357/v3" --os-username admin --os-project-name admin --os-tenant-name admin --os-password "contrail123" --os-default-domain-name default subnet list -f json
       register: network_list
     - name: Display Subnets
       set_fact:
@@ -63,4 +72,3 @@
     - debug:
         msg:
           - "{{subnets}}"
-
