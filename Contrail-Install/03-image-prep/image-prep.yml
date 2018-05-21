@@ -23,6 +23,11 @@
       src: /root/contrail5.0-automation/Contrail-Install/03-image-prep/configs
       dest: /root/
       
+  - name: Check if file guestfs_patched exists
+    stat:
+      path: /root/guestfs_patched
+    register: patch_result
+    
   - name: Workaround for Ubuntu Xenial (https://bugs.launchpad.net/ubuntu/+source/isc-dhcp/+bug/1650740)
     shell: |
       tar -xzf init.tar.gz
