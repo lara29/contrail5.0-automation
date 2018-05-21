@@ -42,10 +42,19 @@
     register: result
     args:
       executable: /bin/bash
+    when: 
+      ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
 
   - set_fact:
      url_path: "{{ result.stdout }}"
-
+    when: 
+     ansible_distribution == 'Debian' or ansible_distribution == 'Ubuntu'
+     
+  - set_fact:
+      url_path: "http://cloud-images.ubuntu.com/releases/server/releases/xenial/release-20180126/ubuntu-16.04-server-cloudimg-amd64-disk1.img"
+    when:
+      ansible_distribution == 'CentOS' or ansible_distribution == 'Red Hat Enterprise Linux'
+      
   - debug:
       var: url_path
       verbosity: 2
